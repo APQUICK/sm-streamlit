@@ -1,9 +1,10 @@
 import tensorflow as tf
 import numpy as np
 import streamlit as st
+import matplotlib.pyplot as plt
 
 # Streamlit App
-st.title("Stock Price Prediction")
+st.title("Stock Price Prediction with LSTM")
 
 # Function to build the model architecture
 def build_lstm_model():
@@ -27,7 +28,7 @@ def build_lstm_model():
 def load_model():
     try:
         model = build_lstm_model()
-        model.load_weights("LSTM_SM.h5")  # Make sure weights file is available
+        model.load_weights("LSTM_SM_weights.h5")  # Make sure weights file is available
         return model
     except Exception as e:
         st.error(f"Error loading model weights: {e}")
@@ -57,13 +58,25 @@ def make_prediction(input_string, model):
         
         # Predict using the model
         prediction = model.predict(input_array)
-        return None, prediction[0][0]  # Return prediction
+        return None, prediction[0][0], input_array
     except Exception as e:
-        return f"Error during prediction: {e}", None
+        return f"Error during prediction: {e}", None, None
 
 if model and input_data:
-    error, prediction = make_prediction(input_data, model)
+    error, prediction, input_array = make_prediction(input_data, model)
     if error:
         st.error(error)
     else:
         st.success(f"Predicted Stock Price (scaled): {prediction:.4f}")
+
+        # Plot the input data and prediction
+        fig, ax = plt.subplots()
+        ax.plot(input_array[0], label="Input Stock Prices")
+        ax.scatter([50], prediction, color="red", label="Predicted Price")
+        ax.set_title("Stock Price Prediction")
+        ax.set_xlabel("Time Steps")
+        ax.set_ylabel("Scaled Stock Prices")
+        ax.legend()
+
+        # Display the plot in Streamlit
+        st.pyplot(fig)
