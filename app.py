@@ -27,7 +27,7 @@ def build_lstm_model():
 def load_model():
     try:
         model = build_lstm_model()
-        model.load_weights("LSTM_SM_weights.h5")  # Make sure weights file is available
+        model.load_weights("LSTM_SM.h5")  # Make sure weights file is available
         return model
     except Exception as e:
         st.error(f"Error loading model weights: {e}")
