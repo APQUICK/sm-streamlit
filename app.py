@@ -2,15 +2,14 @@ import tensorflow as tf
 import numpy as np
 import streamlit as st
 
-# Saving the model
-regressor.save('simple_rnn_model.h5')
+
 
 # Streamlit App Code
 def main():
     st.title("Stock Price Prediction")
 
     # Load the trained model
-    model = tf.keras.models.load_model('simple_rnn_model.h5')
+    model = tf.keras.models.load_model('LSTM_SM.keras')
 
     st.sidebar.header("Input Parameters")
 
