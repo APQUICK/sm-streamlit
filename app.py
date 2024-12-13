@@ -5,14 +5,32 @@ import streamlit as st
 # Streamlit App
 st.title("Stock Price Prediction with LSTM")
 
-# Load the trained LSTM model
+# Function to build the model architecture
+def build_lstm_model():
+    """Recreate the LSTM model architecture."""
+    model = tf.keras.Sequential([
+        tf.keras.layers.LSTM(units=50, return_sequences=True, input_shape=(50, 1)),
+        tf.keras.layers.Dropout(0.2),
+        tf.keras.layers.LSTM(units=50, return_sequences=True),
+        tf.keras.layers.Dropout(0.2),
+        tf.keras.layers.LSTM(units=50, return_sequences=True),
+        tf.keras.layers.Dropout(0.2),
+        tf.keras.layers.LSTM(units=50, return_sequences=False),
+        tf.keras.layers.Dropout(0.2),
+        tf.keras.layers.Dense(units=1)
+    ])
+    model.compile(optimizer='adam', loss='mean_squared_error')
+    return model
+
+# Load the model weights
 @st.cache_resource
 def load_model():
     try:
-        model = tf.keras.models.load_model("LSTM_SM.h5")
+        model = build_lstm_model()
+        model.load_weights("LSTM_SM_weights.h5")  # Make sure weights file is available
         return model
     except Exception as e:
-        st.error(f"Error loading model: {e}")
+        st.error(f"Error loading model weights: {e}")
         return None
 
 model = load_model()
@@ -49,7 +67,3 @@ if model and input_data:
         st.error(error)
     else:
         st.success(f"Predicted Stock Price (scaled): {prediction:.4f}")
-
-
-
-
