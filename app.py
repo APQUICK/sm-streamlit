@@ -24,7 +24,7 @@ if input_data:
 
         if len(input_data) != 50:
             st.error("Please provide exactly 50 values.")
-            return
+            
 
         input_data = np.reshape(input_data, (1, 50, 1))
 
