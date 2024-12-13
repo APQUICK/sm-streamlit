@@ -3,7 +3,7 @@ import numpy as np
 import streamlit as st
 
 # Streamlit App
-st.title("Stock Price Prediction with LSTM")
+st.title("Stock Price Prediction")
 
 # Function to build the model architecture
 def build_lstm_model():
