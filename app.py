@@ -8,7 +8,7 @@ import streamlit as st
 st.title("Stock Price Prediction")
 
 # Load the trained model
-model = tf.keras.models.load_model('LSTM_SM.keras')
+model = tf.keras.models.load_model('LSTM_SM.h5')
 
 st.sidebar.header("Input Parameters")
 
