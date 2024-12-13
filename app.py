@@ -7,7 +7,7 @@ st.title("Stock Price Prediction with LSTM")
 
 # Load the trained model
 try:
-    model = tf.keras.models.load_model('LSTM_SM.h5')
+    model = tf.keras.models.load_model('LSTM_SM.keras')
     st.sidebar.success("Model loaded successfully!")
 except Exception as e:
     st.sidebar.error(f"Error loading model: {e}")
