@@ -1,43 +1,55 @@
-import tensorflow as tf 
+import tensorflow as tf
 import numpy as np
 import streamlit as st
 
-# Streamlit App Code
+# Streamlit App
 st.title("Stock Price Prediction with LSTM")
 
-# Load the trained model
-try:
-    model = tf.keras.models.load_model('LSTM_SM.keras')
-    st.sidebar.success("Model loaded successfully!")
-except Exception as e:
-    st.sidebar.error(f"Error loading model: {e}")
+# Load the trained LSTM model
+@st.cache_resource
+def load_model():
+    try:
+        model = tf.keras.models.load_model("LSTM_SM.h5")
+        return model
+    except Exception as e:
+        st.error(f"Error loading model: {e}")
+        return None
 
-# Sidebar Input
+model = load_model()
+
+# Sidebar for user input
 st.sidebar.header("Input Parameters")
 input_data = st.sidebar.text_area(
-    "Enter 50 scaled stock prices (comma-separated):", 
+    "Enter the last 50 scaled stock prices (comma-separated):",
     placeholder="e.g., 0.0858, 0.0970, ... (50 values)"
 )
 
-if input_data:
+# Function to preprocess and predict
+def make_prediction(input_string, model):
     try:
-        # Preprocessing the input data
-        input_data = np.array([float(i) for i in input_data.split(",")])
+        # Convert input string to numpy array
+        input_array = np.array([float(x.strip()) for x in input_string.split(",")])
+        
+        # Ensure exactly 50 values are provided
+        if len(input_array) != 50:
+            return "Invalid input: Please provide exactly 50 values.", None
 
-        if len(input_data) != 50:
-            st.error("Please provide exactly 50 values.")
-        else:
-            input_data = np.reshape(input_data, (1, 50, 1))
-            
-            # Make prediction
-            try:
-                prediction = model.predict(input_data)
-                st.success(f"Predicted Stock Price (scaled): {prediction[0][0]:.4f}")
-            except Exception as e:
-                st.error(f"Error during prediction: {e}")
+        # Reshape input for the model
+        input_array = np.reshape(input_array, (1, 50, 1))
+        
+        # Predict using the model
+        prediction = model.predict(input_array)
+        return None, prediction[0][0]  # Return prediction
+    except Exception as e:
+        return f"Error during prediction: {e}", None
 
-    except ValueError:
-        st.error("Invalid input. Ensure all values are numeric and comma-separated.")
+if model and input_data:
+    error, prediction = make_prediction(input_data, model)
+    if error:
+        st.error(error)
+    else:
+        st.success(f"Predicted Stock Price (scaled): {prediction:.4f}")
+
 
 
 
